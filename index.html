@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Hunt Builder Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1E1912;--paper:#F3ECD8;--shade:#E6DCC0;--ink:#2B2620;--teal:#2F6E68;--teal-d:#1F4A46;--red:#A63A3A;--brass:#C79A4B;--cloud:#FFFDF7;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'IBM Plex Sans',sans-serif;background:radial-gradient(circle at 12% 15%,rgba(47,110,104,.16),transparent 42%),radial-gradient(circle at 88% 80%,rgba(166,58,58,.10),transparent 42%),var(--bg);color:var(--paper);min-height:100vh;padding:24px 16px 60px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(60px + env(safe-area-inset-bottom,0px));}
+.app{max-width:740px;margin:0 auto;}
+.hq{text-align:center;margin-bottom:18px;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--brass);margin-bottom:6px;}
+.title{font-family:'Special Elite',monospace;font-size:clamp(22px,4.4vw,30px);margin:0 0 4px;}
+.sub{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--teal);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;}
+.stamps{display:flex;justify-content:center;gap:10px;background:rgba(243,236,216,.05);border:1px solid rgba(243,236,216,.14);border-radius:10px;padding:12px;}
+.slot{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px dashed rgba(243,236,216,.28);filter:grayscale(1);opacity:.45;transition:all .35s;}
+.slot.earned{filter:none;opacity:1;background:radial-gradient(circle at 30% 30%,#fdf7e6,var(--brass) 75%);border:2px solid var(--brass);box-shadow:0 0 16px rgba(199,154,75,.5);transform:rotate(-6deg);}
+.cap{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(243,236,216,.55);margin-top:8px;letter-spacing:1px;}
+.strip{margin:20px 0 10px;padding:10px 14px;border-left:3px solid var(--red);background:rgba(166,58,58,.08);font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+.strip b{color:var(--red);}
+.mission{display:none;background:var(--paper);color:var(--ink);border-radius:6px;padding:24px;margin-top:14px;box-shadow:0 18px 40px rgba(0,0,0,.4);border:1px solid var(--shade);}
+.mission.active{display:block;animation:rise .4s ease;}
+@keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.me{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-d);font-weight:700;margin-bottom:4px;}
+.mission h2{font-family:'Special Elite',monospace;font-size:21px;margin:0 0 10px;}
+.mission p{font-size:14.5px;line-height:1.6;margin:0 0 12px;}
+.rules{list-style:none;padding:0;margin:0 0 16px;}
+.rules li{font-size:13.5px;background:var(--shade);border-left:4px solid var(--teal);padding:8px 12px;border-radius:4px;margin-bottom:8px;font-weight:600;}
+.rules li b{color:var(--teal-d);}
+.field{margin-bottom:12px;}
+.field label{display:block;font-weight:700;font-size:13px;margin-bottom:4px;}
+.field small{display:block;font-weight:500;color:#6a6350;font-size:12px;margin-bottom:4px;}
+input[type=text],select,textarea{width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:500;padding:10px 12px;border-radius:4px;border:2px solid #cabf9a;outline:none;background:var(--cloud);color:var(--ink);}
+textarea{min-height:76px;resize:vertical;}
+input:focus,select:focus,textarea:focus{border-color:var(--teal);}
+.stop{background:var(--shade);border-radius:6px;padding:14px;margin-bottom:12px;}
+.stop h3{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--teal-d);margin:0 0 10px;}
+.tipbox{font-size:12.5px;font-weight:600;background:#dcece6;color:#1f4a46;padding:8px 10px;border-radius:4px;margin-top:6px;}
+.chk{display:flex;gap:10px;align-items:flex-start;background:var(--shade);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:13.5px;font-weight:600;cursor:pointer;}
+.chk input{margin-top:3px;accent-color:var(--teal);}
+.btn{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;padding:10px 16px;border-radius:4px;border:none;cursor:pointer;background:var(--teal);color:#fff;margin-right:8px;margin-bottom:6px;}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--ink);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;}
+.nav .btn{margin:0;padding:11px 18px;}
+.nav .ghost{background:transparent;color:var(--paper);border:2px solid rgba(243,236,216,.3);}
+.hint{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(243,236,216,.5);text-align:center;margin-top:8px;}
+.note{margin-top:26px;font-size:12px;color:rgba(243,236,216,.4);text-align:center;line-height:1.6;}
+.plan{border:3px double var(--brass);border-radius:8px;padding:20px;background:linear-gradient(180deg,#fbf6e6,var(--cloud));margin-bottom:14px;}
+.plan h3{font-family:'Special Elite',monospace;margin:0 0 8px;font-size:18px;}
+.plan table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px;}
+.plan th,.plan td{border-bottom:1px solid #d9cfae;padding:6px 4px;text-align:left;vertical-align:top;}
+.card{border:2px dashed var(--ink);border-radius:6px;padding:14px;margin-bottom:12px;background:#fff;page-break-inside:avoid;}
+.card .k{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:2px;color:var(--teal-d);font-weight:700;text-transform:uppercase;}
+.card .mem{font-size:12.5px;font-style:italic;color:#5a5340;margin:6px 0;}
+.card .body{font-size:15px;font-weight:600;margin:6px 0;white-space:pre-wrap;}
+.card .h{font-size:11.5px;color:#6a6350;border-top:1px dotted #aaa;padding-top:6px;margin-top:8px;}
+@media print{.hq,.strip,.nav,.hint,.note,.noprint{display:none!important;}body{background:#fff;color:#000;padding:0;}.mission{box-shadow:none;border:0;padding:0;background:#fff;}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hq">
+  <div class="eyebrow">Field Manual · Top Secret Gift</div>
+  <div class="title">💌 Hunt Builder Academy</div>
+  <div class="sub">Anniversary Scavenger Hunt · 4 modules · ~50 min</div>
+  <div class="stamps"><div class="slot" data-b="0">💌</div><div class="slot" data-b="1">📍</div><div class="slot" data-b="2">🧩</div><div class="slot" data-b="3">🎁</div></div>
+  <div class="cap" id="cap">0 / 4 clearances earned</div>
+</div>
+<div class="strip" id="strip"></div>
+
+<div class="mission active" id="m0">
+  <div class="me">Briefing · ~5 min</div><h2>The Assignment</h2>
+  <p>You're building a scavenger hunt as an anniversary gift. The best hunts aren't about clever puzzles — they're a guided tour of <strong>your story</strong>, with a payoff at the end.</p>
+  <p>Over 4 short modules you'll fill out a build form, one rule at a time. At the end the page turns your answers into a <strong>secret organizer's plan</strong> and <strong>printable clue cards</strong>.</p>
+  <div class="field"><label>Your name</label><input type="text" id="student" maxlength="30"></div>
+  <p class="tipbox">🤫 It's a surprise — don't leave this page open where your partner can see it. Your answers aren't saved if you close the tab, so print or copy your plan at the end.</p>
+</div>
+
+<div class="mission" id="m1">
+  <div class="me">Module 1 · ~10 min</div><h2>💌 The Story</h2>
+  <ul class="rules">
+    <li><b>Rule 1 — Start with why.</b> The hunt should say one thing: "I remember us." Everything else serves that.</li>
+    <li><b>Rule 2 — Give it a hook.</b> Hand over a first envelope with a short, intriguing opening message so they know the game has started.</li>
+  </ul>
+  <div class="field"><label>Your partner's name (or nickname)</label><input type="text" id="partner" maxlength="30"></div>
+  <div class="field"><label>Which anniversary is this?</label><select id="years"><option>1st</option><option>2nd</option><option>3rd</option><option>5th</option><option>10th</option><option>Other milestone</option></select></div>
+  <div class="field"><label>Pick a theme</label><select id="theme"><option value="">Choose one…</option><option value="A Tour of Our Story">A Tour of Our Story</option><option value="Secret Agent Mission">Secret Agent Mission</option><option value="Treasure Map Adventure">Treasure Map Adventure</option><option value="Movie Quest">Movie Quest</option></select></div>
+  <div class="field"><label>Opening message</label><small>2–3 sentences that explain it's a hunt, without giving anything away.</small><textarea id="opener" maxlength="300"></textarea></div>
+</div>
+
+<div class="mission" id="m2">
+  <div class="me">Module 2 · ~10 min</div><h2>📍 The Stops</h2>
+  <ul class="rules">
+    <li><b>Rule 3 — Meaning beats fancy.</b> First date spot, the bench where you talked for hours — real memories beat expensive locations.</li>
+    <li><b>Rule 4 — Keep it short and close.</b> 3–6 stops you can walk or drive between in your time cap. A hunt that drags is a chore.</li>
+    <li><b>Rule 5 — Safe and allowed.</b> Public, open, daylight-friendly places. Never hide things where you'd need to trespass or disturb a business.</li>
+  </ul>
+  <div id="stops"></div>
+  <button class="btn alt" id="addStop">+ Add another stop</button>
+</div>
+
+<div class="mission" id="m3">
+  <div class="me">Module 3 · ~15 min</div><h2>🧩 The Clues</h2>
+  <ul class="rules">
+    <li><b>Rule 6 — Signpost everything.</b> Make it obvious where to look and what counts as a clue — an envelope with their name on it, never a loose scrap they might toss.</li>
+    <li><b>Rule 7 — Mix it up and ramp up.</b> Vary the clue types and start easy so the first win comes fast.</li>
+    <li><b>Rule 8 — Every clue gets a hint.</b> A stuck partner stops having fun. Print the hint small at the bottom.</li>
+  </ul>
+  <div id="clues"></div>
+</div>
+
+<div class="mission" id="m4">
+  <div class="me">Module 4 · ~10 min</div><h2>🎁 The Finale</h2>
+  <ul class="rules">
+    <li><b>Rule 9 — End on feeling, not stuff.</b> The payoff is you, plus a message that lands. A gift is a bonus.</li>
+    <li><b>Rule 10 — Test it and have a backup.</b> Have a friend walk the route, and plan for rain.</li>
+  </ul>
+  <div class="field"><label>Final destination</label><small>Where does the hunt end?</small><input type="text" id="fplace" maxlength="80"></div>
+  <div class="field"><label>Final message</label><small>The words you most want them to read at the end.</small><textarea id="fmsg" maxlength="400"></textarea></div>
+  <div class="field"><label>Start date &amp; time</label><input type="text" id="start" placeholder="e.g. Saturday, 4:00 pm" maxlength="40"></div>
+  <div class="field"><label>Time cap</label><select id="capSel"><option>45 minutes</option><option selected>1 hour</option><option>90 minutes</option><option>2 hours</option></select></div>
+  <div class="field"><label>Backup plan if it rains</label><textarea id="backup" maxlength="200"></textarea></div>
+  <label class="chk"><input type="checkbox" class="rc"> Every place is public and I have permission for anything I'm leaving behind.</label>
+  <label class="chk"><input type="checkbox" class="rc"> I've told a trusted friend the route and when it starts.</label>
+  <label class="chk"><input type="checkbox" class="rc"> I'll walk the route myself first and time it.</label>
+</div>
+
+<div class="mission" id="m5">
+  <div class="me">Debrief</div><h2>⭐ Mission Ready</h2>
+  <p class="noprint">Your hunt is built. Print this page (or Save as PDF), cut out the clue cards, and keep the organizer's plan to yourself. Tip: paste the text version into a Google Doc and save it in Drive so a trusted helper can view it — as Viewer only.</p>
+  <div class="noprint"><button class="btn" onclick="window.print()">🖨 Print / Save as PDF</button><button class="btn alt" id="copyBtn">📋 Copy plan as text</button> <span id="copyMsg" style="font-size:12px;font-weight:600"></span></div>
+  <div id="printArea"></div>
+</div>
+
+<div class="nav"><button class="btn ghost" id="back" onclick="go(-1)">← Back</button><button class="btn" id="next" onclick="go(1)"></button></div>
+<div class="hint" id="gate"></div>
+<div class="note">Facilitator note: each module is a focused 10–15 minute form-filling session. Review the student's answers together between modules.</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const S={stops:[{},{},{}]};
+let cur=0;const earned=[0,0,0,0];
+const ids=['m0','m1','m2','m3','m4','m5'];
+const labels=['Begin Module 1 →','Module 2 →','Module 3 →','Module 4 →','Build my hunt →',''];
+const lines=['BRIEFING — Read the assignment, then enter your name.','FILE 01/04 — The Story. Fill in every field to proceed.','FILE 02/04 — The Stops. At least 3 complete stops.','FILE 03/04 — The Clues. Every stop needs a clue and a hint.','FILE 04/04 — The Finale. Complete the form and safety checks.','DEBRIEF — Print your plan and clue cards.'];
+const clueTypes={riddle:['Riddle','Describe the place without naming it. It doesn\'t need to rhyme.'],photo:['Photo clue','Print a photo of the spot, then use the box for a caption. A close-up detail is harder; a wide shot is easier.'],question:['Question only you two know','Their answer should point to the next place.'],cipher:['Simple cipher','Keep it easy (A=1, B=2…) and spell out the place.'],direct:['Direct instruction','Just say where to go — great as a breather between harder clues.']};
+const v=id=>($(id).value||'').trim();
+
+function ok(i){
+  if(i===1) return v('partner')&&v('theme')&&v('opener');
+  if(i===2) return S.stops.length>=3&&S.stops.every(s=>s.place&&s.memory&&s.hidden);
+  if(i===3) return S.stops.every(s=>s.clue&&s.hint);
+  if(i===4) return v('fplace')&&v('fmsg')&&v('start')&&[...document.querySelectorAll('.rc')].every(c=>c.checked);
+  return true;
+}
+function gate(){
+  const nb=$('next');
+  if(cur===5){nb.style.display='none';$('gate').textContent='';return;}
+  nb.style.display='';const g=ok(cur);nb.disabled=!g;
+  $('gate').textContent=g?'':'Fill in every field above to unlock the next step.';
+}
+function show(){
+  ids.forEach((id,i)=>$(id).classList.toggle('active',i===cur));
+  const l=lines[cur];$('strip').innerHTML='<b>'+l.split(' — ')[0]+'</b> — '+l.split(' — ').slice(1).join(' — ');
+  $('back').style.visibility=cur?'visible':'hidden';$('next').textContent=labels[cur];
+  if(cur===3) renderClues();
+  if(cur===5) buildPlan();
+  gate();
+}
+function go(d){
+  if(d>0){
+    if(!ok(cur))return;
+    if(cur===0)S.student=v('student');
+    if(cur>=1&&cur<=4)earn(cur-1);
+  }
+  const t=cur+d;if(t<0||t>5)return;cur=t;show();window.scrollTo({top:0,behavior:'smooth'});
+}
+function earn(i){
+  if(earned[i])return;earned[i]=1;
+  document.querySelector('.slot[data-b="'+i+'"]').classList.add('earned');
+  $('cap').textContent=earned.filter(Boolean).length+' / 4 clearances earned';
+}
+
+/* stops */
+function renderStops(){
+  $('stops').innerHTML=S.stops.map((s,i)=>`<div class="stop"><h3>Stop ${i+1}</h3>
+    <div class="field"><label>Place</label><input type="text" data-i="${i}" data-f="place" value="${esc(s.place)}" maxlength="80" placeholder="e.g. The corner café where we met"></div>
+    <div class="field"><label>Why it matters</label><small>One memory, in your words. It prints on the next card.</small><textarea data-i="${i}" data-f="memory" maxlength="200">${esc(s.memory)}</textarea></div>
+    <div class="field"><label>Where at this stop will the NEXT clue be hidden?</label><input type="text" data-i="${i}" data-f="hidden" value="${esc(s.hidden)}" maxlength="80" placeholder="e.g. Taped under the third table"></div></div>`).join('');
+  $('addStop').disabled=S.stops.length>=6;
+}
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset&&t.dataset.f){S.stops[+t.dataset.i][t.dataset.f]=t.value.trim();}
+  gate();
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset&&t.dataset.f==='type'){S.stops[+t.dataset.i].type=t.value;const tb=document.getElementById('tip'+t.dataset.i);if(tb)tb.textContent='💡 '+clueTypes[t.value][1];}
+  gate();
+});
+$('addStop').onclick=()=>{if(S.stops.length<6){S.stops.push({});renderStops();gate();}};
+
+/* clues */
+function renderClues(){
+  $('clues').innerHTML=S.stops.map((s,i)=>{
+    const t=s.type||'riddle';
+    return `<div class="stop"><h3>Clue ${i+1} → leads to: ${esc(s.place)||'Stop '+(i+1)}</h3>
+    <div class="field"><label>Clue type</label><select data-i="${i}" data-f="type">${Object.keys(clueTypes).map(k=>`<option value="${k}"${k===t?' selected':''}>${clueTypes[k][0]}</option>`).join('')}</select><div class="tipbox" id="tip${i}">💡 ${clueTypes[t][1]}</div></div>
+    <div class="field"><label>The clue</label><textarea data-i="${i}" data-f="clue" maxlength="300">${esc(s.clue)}</textarea></div>
+    <div class="field"><label>Rescue hint</label><input type="text" data-i="${i}" data-f="hint" value="${esc(s.hint)}" maxlength="120"></div></div>`;
+  }).join('');
+}
+
+/* plan output */
+function planText(){
+  const n=S.stops.length,theme=v('theme'),p=v('partner');
+  let t=`${theme.toUpperCase()} — for ${p}\nBuilt by ${S.student||'you'} · ${v('years')} anniversary\nStart: ${v('start')} · Time cap: ${$('capSel').value}\nRain plan: ${v('backup')||'—'}\n\nORGANIZER'S PLAN (SECRET)\n`;
+  t+=`Card 1: hand over to ${p} at the start → leads to ${S.stops[0].place}\n`;
+  S.stops.forEach((s,i)=>{t+=`Card ${i+2}: hide at ${s.place} — ${s.hidden} → leads to ${i<n-1?S.stops[i+1].place:v('fplace')}\n`;});
+  t+=`\nCLUE CARDS\n\n[Card 1]\n${v('opener')}\n${S.stops[0].clue}\n(Hint: ${S.stops[0].hint})\n`;
+  S.stops.forEach((s,i)=>{
+    const nx=i<n-1?S.stops[i+1]:null;
+    t+=`\n[Card ${i+2}]\nRemember: ${s.memory}\n`+(nx?`${nx.clue}\n(Hint: ${nx.hint})\n`:`${v('fmsg')}\nGo to: ${v('fplace')}\n`);
+  });
+  return t;
+}
+function buildPlan(){
+  const n=S.stops.length,p=esc(v('partner'));
+  let h=`<div class="plan"><h3>${esc(v('theme'))} — for ${p}</h3>
+  <div style="font-size:13px;font-weight:600">Built by ${esc(S.student||'you')} · ${esc(v('years'))} anniversary<br>Start: ${esc(v('start'))} · Time cap: ${esc($('capSel').value)}<br>Rain plan: ${esc(v('backup')||'—')}</div>
+  <div class="eyebrow" style="color:#A63A3A;margin-top:12px">Organizer's plan · keep secret</div>
+  <table><tr><th>Card</th><th>Place it here</th><th>Leads to</th></tr>
+  <tr><td>1</td><td>Hand to ${p} at the start</td><td>${esc(S.stops[0].place)}</td></tr>`;
+  S.stops.forEach((s,i)=>{h+=`<tr><td>${i+2}</td><td>${esc(s.place)} — ${esc(s.hidden)}</td><td>${esc(i<n-1?S.stops[i+1].place:v('fplace'))}</td></tr>`;});
+  h+=`</table></div><div class="eyebrow" style="color:#2B2620">Clue cards · cut along the dashes</div><div style="height:8px"></div>`;
+  h+=`<div class="card"><div class="k">Card 1 · The Opening</div><div class="mem">${esc(v('opener'))}</div><div class="body">${esc(S.stops[0].clue)}</div><div class="h">Stuck? ${esc(S.stops[0].hint)}</div></div>`;
+  S.stops.forEach((s,i)=>{
+    const nx=i<n-1?S.stops[i+1]:null;
+    h+=`<div class="card"><div class="k">Card ${i+2} · ${nx?'Clue '+(i+2):'The Finale'}</div><div class="mem">Remember: ${esc(s.memory)}</div>`+
+    (nx?`<div class="body">${esc(nx.clue)}</div><div class="h">Stuck? ${esc(nx.hint)}</div>`:`<div class="body">${esc(v('fmsg'))}</div><div class="h">Your final destination: ${esc(v('fplace'))}</div>`)+`</div>`;
+  });
+  $('printArea').innerHTML=h;
+}
+$('copyBtn').onclick=async()=>{
+  try{await navigator.clipboard.writeText(planText());$('copyMsg').textContent='Copied!';}
+  catch(e){$('copyMsg').textContent='Copy blocked — use Print instead.';}
+};
+
+renderStops();show();
+</script>
+</body>
+</html>
